@@ -954,6 +954,10 @@ class Monitor(object):
                                      prereqs=prereqs)
 
             for key in custom_channels:
+                # hack by Amjad to skip nll for valid and test
+                if dataset_name in ['valid', 'test']:
+                    continue
+
                 val, ipt, data_specs = custom_channels[key]
                 data_specs[0].validate(ipt)
                 self.add_channel(name=dprefix + key,
