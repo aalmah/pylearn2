@@ -852,7 +852,7 @@ class Monitor(object):
             cost_monitoring_args = {}
 
         model = self.model
-
+        
         # Build a composite data_specs containing the specs for all costs,
         # then the specs of the model
         cost_names = sorted(costs.keys())
@@ -870,7 +870,6 @@ class Monitor(object):
 
         nested_space = CompositeSpace(spaces)
         nested_sources = tuple(sources)
-
         # Flatten this data_specs, so we build only one symbolic Theano
         # variable for each of the unique (space, source) pairs.
         mapping = DataSpecsMapping((nested_space, nested_sources))
@@ -882,6 +881,7 @@ class Monitor(object):
 
         # Build a nested tuple from ipt, to dispatch the appropriate parts
         # of the ipt batch to each cost
+
         nested_ipt = mapping.nest(ipt)
 
         custom_channels = {}
@@ -912,7 +912,8 @@ class Monitor(object):
             channels[name] = (model_channels[name],
                               nested_ipt[-1],
                               (spaces[-1], sources[-1]))
-        custom_channels.update(channels)
+        # hack by Amjad
+        # custom_channels.update(channels)
 
         if is_stochastic(mode):
             seed = [[2013, 2, 22]]
@@ -954,11 +955,23 @@ class Monitor(object):
                                      prereqs=prereqs)
 
             for key in custom_channels:
-                # hack by Amjad to skip nll for valid and test
+                # hack by Amjad to skip some cost monitors for valid and test
                 if dataset_name in ['valid', 'test']:
                     continue
 
                 val, ipt, data_specs = custom_channels[key]
+                data_specs[0].validate(ipt)
+                self.add_channel(name=dprefix + key,
+                                 ipt=ipt,
+                                 val=val,
+                                 data_specs=data_specs,
+                                 dataset=cur_dataset)
+            # hack by Amjad to skip model monitors for valid and test
+            for key in channels:
+                if dataset_name not in ['train','train_sample']:
+                    continue
+
+                val, ipt, data_specs = channels[key]
                 data_specs[0].validate(ipt)
                 self.add_channel(name=dprefix + key,
                                  ipt=ipt,
