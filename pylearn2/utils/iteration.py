@@ -638,6 +638,7 @@ class BatchwiseShuffledSequentialIterator(SequentialSubsetIterator):
     stochastic = True
     uniform_batch_size = False
 
+from sham.pylearn2.utils.iteration import EvenSequencesSubsetIterator
 
 _iteration_schemes = {
     'sequential': SequentialSubsetIterator,
@@ -649,6 +650,7 @@ _iteration_schemes = {
     'even_shuffled_sequential': as_even(ShuffledSequentialSubsetIterator),
     'even_batchwise_shuffled_sequential':
     as_even(BatchwiseShuffledSequentialIterator),
+    'even_sequences': EvenSequencesSubsetIterator,
 }
 
 
