@@ -10,6 +10,7 @@ from pylearn2.sandbox.rnn.space import SequenceSpace, SequenceDataSpace
 from pylearn2.space import CompositeSpace
 from pylearn2.utils.track_version import MetaLibVersion
 
+
 log = logging.getLogger(__name__)
 
 # These layers are guaranteed to be wrapped without issues
@@ -88,7 +89,7 @@ class RNNWrapper(MetaLibVersion):
             The fprop method to be wrapped
         """
         @functools.wraps(fprop)
-        def outer(self, state_below, return_all=False):
+        def outer(self, state_below, return_all=False, ** kwargs):
             if self._requires_reshape:
                 if self._requires_unmask:
                     state_below, mask = state_below
@@ -140,9 +141,9 @@ class RNNWrapper(MetaLibVersion):
                     return state
             else:  # Not RNN-friendly, but not requiring reshape
                 if return_all:
-                    return fprop(self, state_below, return_all)
+                    return fprop(self, state_below, return_all, ** kwargs)
                 else:
-                    return fprop(self, state_below)
+                    return fprop(self, state_below, ** kwargs)
         return outer
 
     @classmethod
