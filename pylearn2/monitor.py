@@ -957,7 +957,7 @@ class Monitor(object):
             for key in custom_channels:
                 # hack by Amjad to skip some cost monitors for valid and test
                 if dataset_name in ['valid', 'test']:
-                    continue
+                    continue  # might change my mind on some specific key
 
                 val, ipt, data_specs = custom_channels[key]
                 data_specs[0].validate(ipt)
@@ -968,7 +968,7 @@ class Monitor(object):
                                  dataset=cur_dataset)
             # hack by Amjad to skip model monitors for valid and test
             for key in channels:
-                if dataset_name not in ['train','train_sample']:
+                if key != 'mse' and dataset_name not in ['train','train_sample']:
                     continue
 
                 val, ipt, data_specs = channels[key]
