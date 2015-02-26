@@ -396,11 +396,19 @@ class SGD(TrainingAlgorithm):
         self._setup_monitor()
 
         with log_timing(log, 'Compiling sgd_update'):
+            import theano
+            # theano.compile.function_dump('slow_graph',theano_args,
+            #                                       updates=updates,
+            #                                       name='sgd_update',
+            #                                       on_unused_input='ignore',
+            #                                       mode=self.theano_function_mode)
             self.sgd_update = function(theano_args,
                                        updates=updates,
                                        name='sgd_update',
                                        on_unused_input='ignore',
                                        mode=self.theano_function_mode)
+            
+#            theano.printing.debugprint(self.sgd_update, print_type=True, file=open('fast.txt', 'w'))
         self.params = params
 
     def train(self, dataset):
